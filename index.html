@@ -106,8 +106,8 @@ select.child-select{
 
 .music-controls{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
     margin-bottom:12px;
 }
 
@@ -115,11 +115,11 @@ select.child-select{
     background:#10ac84;
     color:#fff;
     border:none;
-    padding:12px;
+    padding:12px 6px;
     border-radius:12px;
     cursor:pointer;
     font-weight:bold;
-    font-size:.95em;
+    font-size:.85em;
     box-shadow:0 4px 0 #0e8c6c;
 }
 
@@ -585,7 +585,7 @@ Música polifónica de alta producción generada en tiempo real.
 Diseñada para immersión profunda.
 </p>
 
-<select id="styleSelect">
+<select id="styleSelect" onchange="changeStyle()">
 <option value="ambient">🌌 Ambient Meditativo Inmersivo</option>
 <option value="piano">🎹 Piano Neoclásico Suave</option>
 <option value="lofi">🎧 Lo-Fi Chill & Grooves</option>
@@ -599,8 +599,9 @@ Diseñada para immersión profunda.
 </select>
 
 <div class="music-controls">
-<button class="music-btn" id="playAudioBtn">▶️ Reproducir</button>
-<button class="music-btn" id="nextMusicBtn">🔄 Nueva Variación</button>
+<button class="music-btn" id="playAudioBtn" onclick="toggleAudio()">▶️ Reproducir</button>
+<button class="music-btn" id="nextTrackBtn" onclick="nextTrack()" style="background:#54a0ff;box-shadow:0 4px 0 #2e86de">⏭️ Siguiente Tema</button>
+<button class="music-btn" id="nextMusicBtn" onclick="newVariation()">🔄 Variación</button>
 </div>
 
 <div class="music-status" id="musicStatus">🎵 Música detenida</div>
@@ -614,43 +615,43 @@ Diseñada para immersión profunda.
 
 <div class="ambient-grid">
 <div class="ambient-item">
-<div class="ambient-header"><span>🌧️ Lluvia</span><input type="checkbox" id="rainNoise"></div>
-<input type="range" class="volume-slider" id="rainVol" min="0" max="1" step=".01" value=".5">
+<div class="ambient-header"><span>🌧️ Lluvia</span><input type="checkbox" id="rainNoise" onchange="toggleAmbientNoise('rain', this.checked)"></div>
+<input type="range" class="volume-slider" id="rainVol" min="0" max="1" step=".01" value=".5" oninput="updateAmbientVolume('rain', this.value)">
 </div>
 
 <div class="ambient-item">
-<div class="ambient-header"><span>🌊 Olas del Mar</span><input type="checkbox" id="oceanNoise"></div>
-<input type="range" class="volume-slider" id="oceanVol" min="0" max="1" step=".01" value=".5">
+<div class="ambient-header"><span>🌊 Olas del Mar</span><input type="checkbox" id="oceanNoise" onchange="toggleAmbientNoise('ocean', this.checked)"></div>
+<input type="range" class="volume-slider" id="oceanVol" min="0" max="1" step=".01" value=".5" oninput="updateAmbientVolume('ocean', this.value)">
 </div>
 
 <div class="ambient-item">
-<div class="ambient-header"><span>🔥 Fogata</span><input type="checkbox" id="fireNoise"></div>
-<input type="range" class="volume-slider" id="fireVol" min="0" max="1" step=".01" value=".5">
+<div class="ambient-header"><span>🔥 Fogata</span><input type="checkbox" id="fireNoise" onchange="toggleAmbientNoise('fire', this.checked)"></div>
+<input type="range" class="volume-slider" id="fireVol" min="0" max="1" step=".01" value=".5" oninput="updateAmbientVolume('fire', this.value)">
 </div>
 
 <div class="ambient-item">
-<div class="ambient-header"><span>🌙 Noche</span><input type="checkbox" id="nightNoise"></div>
-<input type="range" class="volume-slider" id="nightVol" min="0" max="1" step=".01" value=".5">
+<div class="ambient-header"><span>🌙 Noche</span><input type="checkbox" id="nightNoise" onchange="toggleAmbientNoise('night', this.checked)"></div>
+<input type="range" class="volume-slider" id="nightVol" min="0" max="1" step=".01" value=".5" oninput="updateAmbientVolume('night', this.value)">
 </div>
 
 <div class="ambient-item">
-<div class="ambient-header"><span>🍃 Viento</span><input type="checkbox" id="windNoise"></div>
-<input type="range" class="volume-slider" id="windVol" min="0" max="1" step=".01" value=".5">
+<div class="ambient-header"><span>🍃 Viento</span><input type="checkbox" id="windNoise" onchange="toggleAmbientNoise('wind', this.checked)"></div>
+<input type="range" class="volume-slider" id="windVol" min="0" max="1" step=".01" value=".5" oninput="updateAmbientVolume('wind', this.value)">
 </div>
 
 <div class="ambient-item">
-<div class="ambient-header"><span>🏞️ Río</span><input type="checkbox" id="riverNoise"></div>
-<input type="range" class="volume-slider" id="riverVol" min="0" max="1" step=".01" value=".5">
+<div class="ambient-header"><span>🏞️ Río</span><input type="checkbox" id="riverNoise" onchange="toggleAmbientNoise('river', this.checked)"></div>
+<input type="range" class="volume-slider" id="riverVol" min="0" max="1" step=".01" value=".5" oninput="updateAmbientVolume('river', this.value)">
 </div>
 
 <div class="ambient-item">
-<div class="ambient-header"><span>🐦 Pájaros</span><input type="checkbox" id="birdsNoise"></div>
-<input type="range" class="volume-slider" id="birdsVol" min="0" max="1" step=".01" value=".5">
+<div class="ambient-header"><span>🐦 Pájaros</span><input type="checkbox" id="birdsNoise" onchange="toggleAmbientNoise('birds', this.checked)"></div>
+<input type="range" class="volume-slider" id="birdsVol" min="0" max="1" step=".01" value=".5" oninput="updateAmbientVolume('birds', this.value)">
 </div>
 
 <div class="ambient-item">
-<div class="ambient-header"><span>⚡ Tormenta</span><input type="checkbox" id="stormNoise"></div>
-<input type="range" class="volume-slider" id="stormVol" min="0" max="1" step=".01" value=".5">
+<div class="ambient-header"><span>⚡ Tormenta</span><input type="checkbox" id="stormNoise" onchange="toggleAmbientNoise('storm', this.checked)"></div>
+<input type="range" class="volume-slider" id="stormVol" min="0" max="1" step=".01" value=".5" oninput="updateAmbientVolume('storm', this.value)">
 </div>
 </div>
 </div>
@@ -770,7 +771,7 @@ Diseñada para immersión profunda.
 <div id="history">
 <h3>Registros Guardados:</h3>
 <label style="font-size:.85em;font-weight:600;color:#54a0ff">Filtrar por:</label>
-<select id="filterChildSelect" class="child-select">
+<select id="filterChildSelect" class="child-select" onchange="loadEntries()">
 <option value="Todos">Mostrar Todos</option>
 <option value="Ían">Solo Ían 👦</option>
 <option value="Jason">Solo Jason 🧒</option>
@@ -784,7 +785,7 @@ Diseñada para immersión profunda.
 <h3>Control Semanal de Emociones 📊</h3>
 <p>Cada vez que se selecciona una emoción, queda registrada automáticamente.</p>
 <label style="font-size:.85em;font-weight:600;color:#54a0ff">Filtrar por:</label>
-<select id="weeklyChildFilter" class="child-select">
+<select id="weeklyChildFilter" class="child-select" onchange="loadWeeklyEmotions()">
 <option value="Todos">Todos</option>
 <option value="Ían">Solo Ían 👦</option>
 <option value="Jason">Solo Jason 🧒</option>
@@ -1273,7 +1274,7 @@ async function toggleAudio(){
         musicTimer = null;
         btn.textContent = '▶️ Reproducir';
         btn.classList.remove('active');
-        document.getElementById('musicStatus').textContent = '🎵 Música pausada';
+        document.getElementById('musicStatus').textContent = '🎵 Música detenida';
         return;
     }
     isPlaying = true;
@@ -1301,6 +1302,29 @@ function changeStyle(){
         startMusicTimer();
         document.getElementById('musicStatus').textContent = '🎶 Reproduciendo: ' + document.getElementById('styleSelect').selectedOptions[0].text;
     }
+}
+
+async function nextTrack(){
+    await initAudio();
+    const select = document.getElementById('styleSelect');
+    let nextIndex = select.selectedIndex + 1;
+    if(nextIndex >= select.options.length){
+        nextIndex = 0;
+    }
+    select.selectedIndex = nextIndex;
+    currentStyle = select.value;
+    variation++;
+    step = 0;
+    
+    if(!isPlaying){
+        isPlaying = true;
+        const btn = document.getElementById('playAudioBtn');
+        btn.textContent = '⏸️ Pausar';
+        btn.classList.add('active');
+    }
+    
+    startMusicTimer();
+    document.getElementById('musicStatus').textContent = '🎶 Reproduciendo: ' + select.options[nextIndex].text;
 }
 
 async function newVariation(){
@@ -1845,228 +1869,178 @@ function saveEntry(){
     };
 
     if(!entry.note.trim() && !entry.photo && !entry.audio && entry.emotion === 'No especificada'){
-        alert('Agregá una emoción, nota, foto o audio antes de guardar.');
+        alert('Por favor agrega al menos una nota, foto, audio o emoción.');
         return;
     }
 
     const entries = JSON.parse(localStorage.getItem('emotionEntries')) || [];
     entries.push(entry);
     localStorage.setItem('emotionEntries', JSON.stringify(entries));
+    alert('¡Registro guardado exitosamente! ✨');
 
-    alert('¡Registro guardado con éxito! 🎉');
-
+    // Limpiar formulario
     document.getElementById('noteInput').value = '';
     document.getElementById('photoInput').value = '';
     document.getElementById('photoPreviewImg').style.display = 'none';
     document.getElementById('audioPlayback').style.display = 'none';
-    document.getElementById('audioPlayback').src = '';
-
     document.querySelectorAll('.buttons-grid .btn').forEach(btn => btn.classList.remove('selected'));
     selectedEmotionValue = '';
-    currentBase64Audio = '';
     currentBase64Photo = '';
+    currentBase64Audio = '';
 
     loadEntries();
 }
 
-/* GRATITUD */
+function loadEntries(){
+    const list = document.getElementById('entriesList');
+    if(!list) return;
+    list.innerHTML = '';
+
+    const filter = document.getElementById('filterChildSelect').value;
+    const entries = JSON.parse(localStorage.getItem('emotionEntries')) || [];
+
+    entries.reverse().forEach((entry, index) => {
+        if(filter !== 'Todos' && entry.child !== filter) return;
+
+        const li = document.createElement('li');
+        let content = `<span class="badge-child">${entry.child}</span><br>
+                       <strong>Fecha:</strong> ${entry.date}<br>
+                       <strong>Emoción:</strong> ${getEmotionEmoji(entry.emotion)} ${entry.emotion}<br>`;
+        if(entry.note) content += `<strong>Nota:</strong> ${entry.note}<br>`;
+        if(entry.photo) content += `<img src="${entry.photo}" class="entry-img" alt="Foto adjunta">`;
+        if(entry.audio) content += `<audio src="${entry.audio}" controls style="width:100%;margin-top:8px"></audio>`;
+        
+        content += `<button class="btn-delete" onclick="deleteEntry(${entries.length - 1 - index})">Eliminar</button>`;
+        li.innerHTML = content;
+        list.appendChild(li);
+    });
+}
+
+function deleteEntry(index){
+    const entries = JSON.parse(localStorage.getItem('emotionEntries')) || [];
+    entries.splice(index, 1);
+    localStorage.setItem('emotionEntries', JSON.stringify(entries));
+    loadEntries();
+}
+
+/* GUARDAR GRATITUD */
 document.getElementById('saveGratitudeBtn').addEventListener('click', saveGratitude);
 
 function saveGratitude(){
-    const input = document.getElementById('gratitudeInput');
-    if(!input.value.trim()) return;
+    const text = document.getElementById('gratitudeInput').value.trim();
+    if(!text){ alert('Escribí algo por lo cual estar agradecido.'); return; }
 
-    const items = JSON.parse(localStorage.getItem('gratitudeEntries')) || [];
-    items.push({text: input.value.trim(), date: new Date().toLocaleString()});
-    localStorage.setItem('gratitudeEntries', JSON.stringify(items));
-
-    input.value = '';
-    alert('¡Gratitud guardada! ⭐');
-    loadGratitude();
-}
-
-/* ESTRATEGIAS */
-document.getElementById('saveStrategyBtn').addEventListener('click', saveStrategy);
-
-function saveStrategy(){
-    const input = document.getElementById('strategyInput');
-    if(!input.value.trim()) return;
-
-    const items = JSON.parse(localStorage.getItem('strategyEntries')) || [];
-    items.push({text: input.value.trim(), date: new Date().toLocaleString()});
-    localStorage.setItem('strategyEntries', JSON.stringify(items));
-
-    input.value = '';
-    alert('¡Estrategia guardada! 💡');
-    loadStrategies();
-}
-
-/* MICROEXPRESIONES */
-document.getElementById('saveMicroBtn').addEventListener('click', saveMicroexpression);
-
-function saveMicroexpression(){
-    const input = document.getElementById('microexpressionInput');
-    if(!input.value.trim()) return;
-
-    const items = JSON.parse(localStorage.getItem('microexpressionEntries')) || [];
-    items.push({
+    const entry = {
         child: document.getElementById('childSelect').value,
-        text: input.value.trim(),
+        text: text,
         date: new Date().toLocaleString()
-    });
-    localStorage.setItem('microexpressionEntries', JSON.stringify(items));
+    };
 
-    input.value = '';
-    alert('¡Observación guardada! 👀');
-    loadMicroexpressions();
-}
-
-/* ELIMINAR */
-function deleteItem(storageKey, index){
-    const items = JSON.parse(localStorage.getItem(storageKey)) || [];
-    if(!confirm('¿Querés eliminar este registro?')) return;
-
-    items.splice(index, 1);
-    localStorage.setItem(storageKey, JSON.stringify(items));
-
-    if(storageKey === 'emotionEntries') loadEntries();
-    if(storageKey === 'gratitudeEntries') loadGratitude();
-    if(storageKey === 'strategyEntries') loadStrategies();
-    if(storageKey === 'microexpressionEntries') loadMicroexpressions();
-}
-
-/* HISTORIAL */
-function loadEntries(){
-    const list = document.getElementById('entriesList');
-    const filter = document.getElementById('filterChildSelect').value;
-    list.innerHTML = '';
-
-    const entries = JSON.parse(localStorage.getItem('emotionEntries')) || [];
-    entries.forEach((item, index) => {
-        const child = item.child || 'General';
-        if(filter !== 'Todos' && child !== filter) return;
-
-        const li = document.createElement('li');
-        const badge = document.createElement('span');
-        badge.className = 'badge-child';
-        badge.textContent = '👤 ' + (child === 'Padre' ? 'Papá' : child);
-        li.appendChild(badge);
-        li.appendChild(document.createElement('br'));
-
-        const strong = document.createElement('strong');
-        strong.textContent = item.date + ' - Emoción: ' + item.emotion;
-        li.appendChild(strong);
-        li.appendChild(document.createElement('br'));
-
-        if(item.note) li.appendChild(document.createTextNode(item.note));
-
-        if(item.photo){
-            const img = document.createElement('img');
-            img.src = item.photo;
-            img.className = 'entry-img';
-            li.appendChild(img);
-        }
-
-        if(item.audio){
-            const audio = document.createElement('audio');
-            audio.src = item.audio;
-            audio.controls = true;
-            audio.style.width = '100%';
-            audio.style.marginTop = '8px';
-            li.appendChild(audio);
-        }
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.className = 'btn-delete';
-        deleteBtn.textContent = 'Eliminar';
-        deleteBtn.onclick = () => deleteItem('emotionEntries', index);
-
-        li.appendChild(deleteBtn);
-        list.appendChild(li);
-    });
+    const list = JSON.parse(localStorage.getItem('gratitudeEntries')) || [];
+    list.push(entry);
+    localStorage.setItem('gratitudeEntries', JSON.stringify(list));
+    document.getElementById('gratitudeInput').value = '';
+    loadGratitude();
 }
 
 function loadGratitude(){
     const list = document.getElementById('gratitudeList');
+    if(!list) return;
     list.innerHTML = '';
-    const items = JSON.parse(localStorage.getItem('gratitudeEntries')) || [];
-    items.forEach((item, index) => {
+    const entries = JSON.parse(localStorage.getItem('gratitudeEntries')) || [];
+    entries.reverse().forEach((item, index) => {
         const li = document.createElement('li');
-        li.innerHTML = '<strong>' + escapeHTML(item.date) + '</strong>: ' + escapeHTML(item.text);
-        const btn = document.createElement('button');
-        btn.className = 'btn-delete';
-        btn.textContent = 'Eliminar';
-        btn.onclick = () => deleteItem('gratitudeEntries', index);
-        li.appendChild(btn);
+        li.innerHTML = `<span class="badge-child">${item.child}</span><br>
+                        <strong>${item.date}:</strong> ${item.text}
+                        <button class="btn-delete" onclick="deleteGratitude(${entries.length - 1 - index})">Eliminar</button>`;
         list.appendChild(li);
     });
+}
+
+function deleteGratitude(index){
+    const entries = JSON.parse(localStorage.getItem('gratitudeEntries')) || [];
+    entries.splice(index, 1);
+    localStorage.setItem('gratitudeEntries', JSON.stringify(entries));
+    loadGratitude();
+}
+
+/* GUARDAR ESTRATEGIAS */
+document.getElementById('saveStrategyBtn').addEventListener('click', saveStrategy);
+
+function saveStrategy(){
+    const text = document.getElementById('strategyInput').value.trim();
+    if(!text){ alert('Escribí una estrategia.'); return; }
+
+    const entry = { text: text, date: new Date().toLocaleString() };
+    const list = JSON.parse(localStorage.getItem('strategyEntries')) || [];
+    list.push(entry);
+    localStorage.setItem('strategyEntries', JSON.stringify(list));
+    document.getElementById('strategyInput').value = '';
+    loadStrategies();
 }
 
 function loadStrategies(){
     const list = document.getElementById('strategyList');
+    if(!list) return;
     list.innerHTML = '';
-    const items = JSON.parse(localStorage.getItem('strategyEntries')) || [];
-    items.forEach((item, index) => {
+    const entries = JSON.parse(localStorage.getItem('strategyEntries')) || [];
+    entries.reverse().forEach((item, index) => {
         const li = document.createElement('li');
-        li.innerHTML = '<strong>' + escapeHTML(item.date) + '</strong>: ' + escapeHTML(item.text);
-        const btn = document.createElement('button');
-        btn.className = 'btn-delete';
-        btn.textContent = 'Eliminar';
-        btn.onclick = () => deleteItem('strategyEntries', index);
-        li.appendChild(btn);
+        li.innerHTML = `<strong>${item.date}:</strong> ${item.text}
+                        <button class="btn-delete" onclick="deleteStrategy(${entries.length - 1 - index})">Eliminar</button>`;
         list.appendChild(li);
     });
+}
+
+function deleteStrategy(index){
+    const entries = JSON.parse(localStorage.getItem('strategyEntries')) || [];
+    entries.splice(index, 1);
+    localStorage.setItem('strategyEntries', JSON.stringify(entries));
+    loadStrategies();
+}
+
+/* GUARDAR MICROEXPRESIONES */
+document.getElementById('saveMicroBtn').addEventListener('click', saveMicroexpression);
+
+function saveMicroexpression(){
+    const text = document.getElementById('microexpressionInput').value.trim();
+    if(!text){ alert('Escribí una observación.'); return; }
+
+    const entry = {
+        child: document.getElementById('childSelect').value,
+        text: text,
+        date: new Date().toLocaleString()
+    };
+
+    const list = JSON.parse(localStorage.getItem('microexpressionEntries')) || [];
+    list.push(entry);
+    localStorage.setItem('microexpressionEntries', JSON.stringify(list));
+    document.getElementById('microexpressionInput').value = '';
+    loadMicroexpressions();
 }
 
 function loadMicroexpressions(){
     const list = document.getElementById('microexpressionList');
+    if(!list) return;
     list.innerHTML = '';
-    const items = JSON.parse(localStorage.getItem('microexpressionEntries')) || [];
-    items.forEach((item, index) => {
+    const entries = JSON.parse(localStorage.getItem('microexpressionEntries')) || [];
+    entries.reverse().forEach((item, index) => {
         const li = document.createElement('li');
-        const childName = item.child === 'Padre' ? 'Papá' : (item.child || 'General');
-        li.innerHTML = '<strong>' + escapeHTML(item.date) + '</strong> (' + escapeHTML(childName) + '): ' + escapeHTML(item.text);
-        const btn = document.createElement('button');
-        btn.className = 'btn-delete';
-        btn.textContent = 'Eliminar';
-        btn.onclick = () => deleteItem('microexpressionEntries', index);
-        li.appendChild(btn);
+        li.innerHTML = `<span class="badge-child">${item.child}</span><br>
+                        <strong>${item.date}:</strong> ${item.text}
+                        <button class="btn-delete" onclick="deleteMicroexpression(${entries.length - 1 - index})">Eliminar</button>`;
         list.appendChild(li);
     });
 }
 
-function escapeHTML(text){
-    return String(text)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+function deleteMicroexpression(index){
+    const entries = JSON.parse(localStorage.getItem('microexpressionEntries')) || [];
+    entries.splice(index, 1);
+    localStorage.setItem('microexpressionEntries', JSON.stringify(entries));
+    loadMicroexpressions();
 }
 
-/* EVENTOS DE MÚSICA Y AMBIENTE */
-document.getElementById('playAudioBtn').addEventListener('click', toggleAudio);
-document.getElementById('nextMusicBtn').addEventListener('click', newVariation);
-document.getElementById('styleSelect').addEventListener('change', changeStyle);
-document.getElementById('filterChildSelect').addEventListener('change', loadEntries);
-document.getElementById('weeklyChildFilter').addEventListener('change', loadWeeklyEmotions);
-
-['rain', 'ocean', 'fire', 'night', 'wind', 'river', 'birds', 'storm'].forEach(type => {
-    const check = document.getElementById(type + 'Noise');
-    const slider = document.getElementById(type + 'Vol');
-    if(check){
-        check.addEventListener('change', function(){
-            toggleAmbientNoise(type, this.checked);
-        });
-    }
-    if(slider){
-        slider.addEventListener('input', function(){
-            updateAmbientVolume(type, this.value);
-        });
-    }
-});
-
-// Carga Inicial de Registros
+/* INICIALIZACIÓN AL CÁRGAR LA PÁGINA */
 window.addEventListener('DOMContentLoaded', () => {
     loadEntries();
     loadWeeklyEmotions();
@@ -2075,5 +2049,6 @@ window.addEventListener('DOMContentLoaded', () => {
     loadMicroexpressions();
 });
 </script>
+
 </body>
 </html>
