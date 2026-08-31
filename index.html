@@ -1662,6 +1662,15 @@ function saveWeeklyEmotion(emotion, child){
     loadWeeklyEmotions();
 }
 
+function deleteWeeklyEmotionEntry(index){
+    const weeklyEntries = JSON.parse(localStorage.getItem('weeklyEmotionEntries')) || [];
+    if(index >= 0 && index < weeklyEntries.length){
+        weeklyEntries.splice(index, 1);
+        localStorage.setItem('weeklyEmotionEntries', JSON.stringify(weeklyEntries));
+        loadWeeklyEmotions();
+    }
+}
+
 function loadWeeklyEmotions(){
     const container = document.getElementById('weeklyEmotionList');
     if(!container) return;
@@ -1676,11 +1685,11 @@ function loadWeeklyEmotions(){
     }
 
     const weeks = {};
-    entries.forEach(item => {
+    entries.forEach((item, originalIndex) => {
         if(filter !== 'Todos' && item.child !== filter) return;
         const week = item.week || getWeekKey(new Date(item.date));
         if(!weeks[week]){ weeks[week] = []; }
-        weeks[week].push(item);
+        weeks[week].push({ ...item, originalIndex });
     });
 
     const weekKeys = Object.keys(weeks).sort().reverse();
@@ -1721,31 +1730,47 @@ function loadWeeklyEmotions(){
 
             childBox.appendChild(childName);
 
-            const emotionCounts = {};
+            const emotionGroup = {};
             children[child].forEach(item => {
-                if(!emotionCounts[item.emotion]){ emotionCounts[item.emotion] = 0; }
-                emotionCounts[item.emotion]++;
+                if(!emotionGroup[item.emotion]){ emotionGroup[item.emotion] = []; }
+                emotionGroup[item.emotion].push(item.originalIndex);
             });
 
-            const emotionNames = Object.keys(emotionCounts).sort((a,b) => emotionCounts[b] - emotionCounts[a]);
+            const emotionNames = Object.keys(emotionGroup).sort((a,b) => emotionGroup[b].length - emotionGroup[a].length);
             let total = 0;
 
             emotionNames.forEach(emotion => {
+                const indices = emotionGroup[emotion];
                 const row = document.createElement('div');
                 row.className = 'weekly-emotion';
 
                 const emotionName = document.createElement('span');
                 emotionName.textContent = getEmotionEmoji(emotion) + ' ' + emotion;
 
+                const rightBox = document.createElement('div');
+                rightBox.style.display = 'flex';
+                rightBox.style.alignItems = 'center';
+                rightBox.style.gap = '8px';
+
                 const count = document.createElement('span');
                 count.className = 'weekly-count';
-                count.textContent = emotionCounts[emotion];
+                count.textContent = indices.length;
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn-delete';
+                delBtn.style.marginTop = '0';
+                delBtn.style.padding = '2px 8px';
+                delBtn.textContent = '🗑️';
+                delBtn.onclick = () => deleteWeeklyEmotionEntry(indices[0]);
+
+                rightBox.appendChild(count);
+                rightBox.appendChild(delBtn);
 
                 row.appendChild(emotionName);
-                row.appendChild(count);
+                row.appendChild(rightBox);
                 childBox.appendChild(row);
 
-                total += emotionCounts[emotion];
+                total += indices.length;
             });
 
             const totalBox = document.createElement('div');
@@ -1817,79 +1842,78 @@ document.getElementById('recordBtn').addEventListener('click', toggleRecording);
 
 async function toggleRecording(){
     const button = document.getElementById('recordBtn');
-    const playback = document.getElementById('audioPlayback');
+    if(!mediaRecorder || mediaRecorder.state === 'inactive'){
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
 
-    if(mediaRecorder && mediaRecorder.state === 'recording'){
-        mediaRecorder.stop();
-        button.textContent = 'Grabar Audio';
-        return;
-    }
-
-    try{
-        const stream = await navigator.mediaDevices.getUserMedia({audio:true});
-        let mimeType = MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '';
-
-        mediaRecorder = mimeType ? new MediaRecorder(stream, {mimeType}) : new MediaRecorder(stream);
-        audioChunks = [];
-
-        mediaRecorder.ondataavailable = event => {
-            if(event.data.size > 0) audioChunks.push(event.data);
-        };
-
-        mediaRecorder.onstop = () => {
-            stream.getTracks().forEach(track => track.stop());
-            const blob = new Blob(audioChunks, {type: mediaRecorder.mimeType});
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                currentBase64Audio = reader.result;
-                playback.src = currentBase64Audio;
-                playback.style.display = 'block';
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
             };
-            reader.readAsDataURL(blob);
-        };
 
-        mediaRecorder.start();
-        button.textContent = 'Detener Grabación ⏹️';
-    } catch(error){
-        alert('No se pudo acceder al micrófono. Verificá los permisos del navegador.');
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    currentBase64Audio = reader.result;
+                    const audioPlayback = document.getElementById('audioPlayback');
+                    audioPlayback.src = currentBase64Audio;
+                    audioPlayback.style.display = 'block';
+                };
+                reader.readAsDataURL(audioBlob);
+            };
+
+            mediaRecorder.start();
+            button.textContent = 'Detener Grabación ⏹️';
+            button.style.background = '#ee5253';
+        } catch(err) {
+            alert('No se pudo acceder al micrófono: ' + err.message);
+        }
+    } else {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        button.textContent = 'Grabar Audio';
+        button.style.background = '#54a0ff';
     }
 }
 
-/* GUARDAR REGISTRO */
-document.getElementById('saveEntryBtn').addEventListener('click', saveEntry);
+/* GUARDAR Y CARGAR OTROS REGISTROS */
+document.getElementById('saveEntryBtn').addEventListener('click', () => {
+    const note = document.getElementById('noteInput').value;
+    const child = document.getElementById('childSelect').value;
 
-function saveEntry(){
+    if(!selectedEmotionValue && !note && !currentBase64Photo && !currentBase64Audio){
+        alert('Por favor selecciona una emoción o escribe una nota.');
+        return;
+    }
+
     const entry = {
-        child: document.getElementById('childSelect').value,
-        emotion: selectedEmotionValue || 'No especificada',
-        note: document.getElementById('noteInput').value,
+        child: child,
+        emotion: selectedEmotionValue,
+        note: note,
         photo: currentBase64Photo,
         audio: currentBase64Audio,
         date: new Date().toLocaleString()
     };
 
-    if(!entry.note.trim() && !entry.photo && !entry.audio && entry.emotion === 'No especificada'){
-        alert('Por favor agrega al menos una nota, foto, audio o emoción.');
-        return;
-    }
-
     const entries = JSON.parse(localStorage.getItem('emotionEntries')) || [];
     entries.push(entry);
     localStorage.setItem('emotionEntries', JSON.stringify(entries));
+
     alert('¡Registro guardado exitosamente! ✨');
 
-    // Limpiar formulario
     document.getElementById('noteInput').value = '';
+    currentBase64Photo = '';
+    currentBase64Audio = '';
+    selectedEmotionValue = '';
+    document.querySelectorAll('.buttons-grid .btn').forEach(btn => btn.classList.remove('selected'));
     document.getElementById('photoInput').value = '';
     document.getElementById('photoPreviewImg').style.display = 'none';
     document.getElementById('audioPlayback').style.display = 'none';
-    document.querySelectorAll('.buttons-grid .btn').forEach(btn => btn.classList.remove('selected'));
-    selectedEmotionValue = '';
-    currentBase64Photo = '';
-    currentBase64Audio = '';
 
     loadEntries();
-}
+});
 
 function loadEntries(){
     const list = document.getElementById('entriesList');
@@ -1899,19 +1923,20 @@ function loadEntries(){
     const filter = document.getElementById('filterChildSelect').value;
     const entries = JSON.parse(localStorage.getItem('emotionEntries')) || [];
 
-    entries.reverse().forEach((entry, index) => {
-        if(filter !== 'Todos' && entry.child !== filter) return;
+    entries.forEach((item, index) => {
+        if(filter !== 'Todos' && item.child !== filter) return;
 
         const li = document.createElement('li');
-        let content = `<span class="badge-child">${entry.child}</span><br>
-                       <strong>Fecha:</strong> ${entry.date}<br>
-                       <strong>Emoción:</strong> ${getEmotionEmoji(entry.emotion)} ${entry.emotion}<br>`;
-        if(entry.note) content += `<strong>Nota:</strong> ${entry.note}<br>`;
-        if(entry.photo) content += `<img src="${entry.photo}" class="entry-img" alt="Foto adjunta">`;
-        if(entry.audio) content += `<audio src="${entry.audio}" controls style="width:100%;margin-top:8px"></audio>`;
         
-        content += `<button class="btn-delete" onclick="deleteEntry(${entries.length - 1 - index})">Eliminar</button>`;
-        li.innerHTML = content;
+        let html = '<span class="badge-child">' + (item.child === 'Padre' ? 'Papá' : item.child) + '</span><br>';
+        if(item.emotion) html += '<strong>Emoción:</strong> ' + getEmotionEmoji(item.emotion) + ' ' + item.emotion + '<br>';
+        if(item.note) html += '<strong>Nota:</strong> ' + item.note + '<br>';
+        if(item.photo) html += '<img src="' + item.photo + '" class="entry-img">';
+        if(item.audio) html += '<audio src="' + item.audio + '" controls style="width:100%;margin-top:8px"></audio>';
+        html += '<small style="color:#6c7a89">' + item.date + '</small>';
+        html += '<button class="btn-delete" onclick="deleteEntry(' + index + ')">Eliminar</button>';
+
+        li.innerHTML = html;
         list.appendChild(li);
     });
 }
@@ -1923,132 +1948,63 @@ function deleteEntry(index){
     loadEntries();
 }
 
-/* GUARDAR GRATITUD */
-document.getElementById('saveGratitudeBtn').addEventListener('click', saveGratitude);
+/* OTROS ELEMENTOS DE GUARDADO */
+document.getElementById('saveGratitudeBtn').addEventListener('click', () => {
+    saveSimpleText('gratitudeInput', 'gratitudeList', 'gratitudeEntries', 'Agradecimiento');
+});
 
-function saveGratitude(){
-    const text = document.getElementById('gratitudeInput').value.trim();
-    if(!text){ alert('Escribí algo por lo cual estar agradecido.'); return; }
+document.getElementById('saveStrategyBtn').addEventListener('click', () => {
+    saveSimpleText('strategyInput', 'strategyList', 'strategyEntries', 'Estrategia');
+});
 
-    const entry = {
-        child: document.getElementById('childSelect').value,
-        text: text,
-        date: new Date().toLocaleString()
-    };
+document.getElementById('saveMicroBtn').addEventListener('click', () => {
+    saveSimpleText('microexpressionInput', 'microexpressionList', 'microEntries', 'Observación');
+});
 
-    const list = JSON.parse(localStorage.getItem('gratitudeEntries')) || [];
-    list.push(entry);
-    localStorage.setItem('gratitudeEntries', JSON.stringify(list));
-    document.getElementById('gratitudeInput').value = '';
-    loadGratitude();
+function saveSimpleText(inputId, listId, storageKey, label){
+    const input = document.getElementById(inputId);
+    const text = input.value.trim();
+    if(!text) return;
+
+    const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+    entries.push({ child: document.getElementById('childSelect').value, text: text, date: new Date().toLocaleString() });
+    localStorage.setItem(storageKey, JSON.stringify(entries));
+
+    input.value = '';
+    loadSimpleList(listId, storageKey, label);
 }
 
-function loadGratitude(){
-    const list = document.getElementById('gratitudeList');
+function loadSimpleList(listId, storageKey, label){
+    const list = document.getElementById(listId);
     if(!list) return;
     list.innerHTML = '';
-    const entries = JSON.parse(localStorage.getItem('gratitudeEntries')) || [];
-    entries.reverse().forEach((item, index) => {
+
+    const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
+    entries.forEach((item, index) => {
         const li = document.createElement('li');
-        li.innerHTML = `<span class="badge-child">${item.child}</span><br>
-                        <strong>${item.date}:</strong> ${item.text}
-                        <button class="btn-delete" onclick="deleteGratitude(${entries.length - 1 - index})">Eliminar</button>`;
+        li.innerHTML = '<span class="badge-child">' + (item.child === 'Padre' ? 'Papá' : item.child) + '</span><br>' +
+            '<strong>' + label + ':</strong> ' + item.text + '<br>' +
+            '<small style="color:#6c7a89">' + item.date + '</small>' +
+            '<button class="btn-delete" onclick="deleteSimpleEntry(\'' + storageKey + '\',' + index + ',\'' + listId + '\',\'' + label + '\')">Eliminar</button>';
         list.appendChild(li);
     });
 }
 
-function deleteGratitude(index){
-    const entries = JSON.parse(localStorage.getItem('gratitudeEntries')) || [];
+function deleteSimpleEntry(storageKey, index, listId, label){
+    const entries = JSON.parse(localStorage.getItem(storageKey)) || [];
     entries.splice(index, 1);
-    localStorage.setItem('gratitudeEntries', JSON.stringify(entries));
-    loadGratitude();
+    localStorage.setItem(storageKey, JSON.stringify(entries));
+    loadSimpleList(listId, storageKey, label);
 }
 
-/* GUARDAR ESTRATEGIAS */
-document.getElementById('saveStrategyBtn').addEventListener('click', saveStrategy);
-
-function saveStrategy(){
-    const text = document.getElementById('strategyInput').value.trim();
-    if(!text){ alert('Escribí una estrategia.'); return; }
-
-    const entry = { text: text, date: new Date().toLocaleString() };
-    const list = JSON.parse(localStorage.getItem('strategyEntries')) || [];
-    list.push(entry);
-    localStorage.setItem('strategyEntries', JSON.stringify(list));
-    document.getElementById('strategyInput').value = '';
-    loadStrategies();
-}
-
-function loadStrategies(){
-    const list = document.getElementById('strategyList');
-    if(!list) return;
-    list.innerHTML = '';
-    const entries = JSON.parse(localStorage.getItem('strategyEntries')) || [];
-    entries.reverse().forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<strong>${item.date}:</strong> ${item.text}
-                        <button class="btn-delete" onclick="deleteStrategy(${entries.length - 1 - index})">Eliminar</button>`;
-        list.appendChild(li);
-    });
-}
-
-function deleteStrategy(index){
-    const entries = JSON.parse(localStorage.getItem('strategyEntries')) || [];
-    entries.splice(index, 1);
-    localStorage.setItem('strategyEntries', JSON.stringify(entries));
-    loadStrategies();
-}
-
-/* GUARDAR MICROEXPRESIONES */
-document.getElementById('saveMicroBtn').addEventListener('click', saveMicroexpression);
-
-function saveMicroexpression(){
-    const text = document.getElementById('microexpressionInput').value.trim();
-    if(!text){ alert('Escribí una observación.'); return; }
-
-    const entry = {
-        child: document.getElementById('childSelect').value,
-        text: text,
-        date: new Date().toLocaleString()
-    };
-
-    const list = JSON.parse(localStorage.getItem('microexpressionEntries')) || [];
-    list.push(entry);
-    localStorage.setItem('microexpressionEntries', JSON.stringify(list));
-    document.getElementById('microexpressionInput').value = '';
-    loadMicroexpressions();
-}
-
-function loadMicroexpressions(){
-    const list = document.getElementById('microexpressionList');
-    if(!list) return;
-    list.innerHTML = '';
-    const entries = JSON.parse(localStorage.getItem('microexpressionEntries')) || [];
-    entries.reverse().forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span class="badge-child">${item.child}</span><br>
-                        <strong>${item.date}:</strong> ${item.text}
-                        <button class="btn-delete" onclick="deleteMicroexpression(${entries.length - 1 - index})">Eliminar</button>`;
-        list.appendChild(li);
-    });
-}
-
-function deleteMicroexpression(index){
-    const entries = JSON.parse(localStorage.getItem('microexpressionEntries')) || [];
-    entries.splice(index, 1);
-    localStorage.setItem('microexpressionEntries', JSON.stringify(entries));
-    loadMicroexpressions();
-}
-
-/* INICIALIZACIÓN AL CÁRGAR LA PÁGINA */
+// Inicialización de datos guardados al cargar la página
 window.addEventListener('DOMContentLoaded', () => {
     loadEntries();
     loadWeeklyEmotions();
-    loadGratitude();
-    loadStrategies();
-    loadMicroexpressions();
+    loadSimpleList('gratitudeList', 'gratitudeEntries', 'Agradecimiento');
+    loadSimpleList('strategyList', 'strategyEntries', 'Estrategia');
+    loadSimpleList('microexpressionList', 'microEntries', 'Observación');
 });
 </script>
-
 </body>
 </html>
