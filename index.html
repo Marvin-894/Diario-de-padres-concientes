@@ -848,123 +848,263 @@ const N = {
 /* ESTILOS MUSICALES CON ARMONÍA EXTENDIDA Y ESTRUCTURA PROGRESIVA */
 const styles = {
     ambient:{
-        bpm:54, wave:'sine',
+        bpm:50, wave:'sine',
         chords:[
-            [N.C3, N.G3, N.B3, N.D4, N.E4], // Cmaj9
-            [N.A2, N.E3, N.G3, N.C4, N.E4], // Am7
-            [N.F2, N.C3, N.E3, N.G3, N.A3], // Fmaj7(#11)
-            [N.G2, N.D3, N.F3, N.A3, N.B3]  // G9
+            [N.C3, N.G3, N.B3, N.D4, N.E4, N.G4], // Cmaj9(13)
+            [N.A2, N.E3, N.G3, N.C4, N.E4, N.G4], // Am11
+            [N.F2, N.C3, N.E3, N.G3, N.A3, N.D4], // Fmaj7(#11)
+            [N.D3, N.A3, N.C4, N.E4, N.F4, N.A4], // Dm11
+            [N.Ab2, N.Eb3, N.G3, N.Bb3, N.C4, N.Eb4], // Abmaj9 (Intercambio modal cálido)
+            [N.F2, N.C3, N.G3, N.A3, N.C4, N.E4], // Fmaj9
+            [N.G2, N.D3, N.F3, N.A3, N.B3, N.E4], // G13
+            [N.C2, N.G2, N.D3, N.E3, N.G3, N.B3]  // Cadd9/C
         ],
-        melody:[N.E5, null, N.G5, N.D5, N.B4, null, N.C5, N.D5, N.E5, N.G5, N.C6, N.B5, N.G5, N.E5, N.D5, null],
-        bass:[N.C2, null, null, N.G2, N.A2, null, null, N.E2, N.F2, null, null, N.C3, N.G2, null, N.D2, null],
+        melody:[
+            N.E5, null, N.G5, N.D5, N.B4, null, N.C5, N.D5, 
+            N.E5, N.G5, N.C6, N.B5, N.G5, N.E5, N.D5, null,
+            N.C5, N.E5, N.G5, N.A5, N.G5, N.E5, N.D5, N.C5,
+            N.B4, N.D5, N.G5, N.E5, N.D5, N.C5, N.B4, null
+        ],
+        bass:[
+            N.C2, null, N.G2, null, N.A2, null, N.E2, null, 
+            N.F2, null, N.C3, null, N.D2, null, N.A2, null,
+            N.Ab2, null, N.Eb2, null, N.F2, null, N.C2, null,
+            N.G2, null, N.D2, null, N.C2, null, N.G2, null
+        ],
         drums:false, pad:true, spatial:true
     },
     piano:{
-        bpm:64, wave:'triangle',
+        bpm:60, wave:'triangle',
         chords:[
-            [N.C3, N.G3, N.D4, N.E4], // Cadd9
-            [N.F3, N.C4, N.E4, N.A4], // Fmaj7
-            [N.A2, N.E3, N.G3, N.C4], // Am7
-            [N.G2, N.D3, N.A3, N.B3]  // Gadd9
+            [N.C3, N.G3, N.B3, N.D4, N.E4], // Cadd9(add7)
+            [N.F3, N.C4, N.E4, N.G4, N.A4], // Fmaj9
+            [N.A2, N.E3, N.G3, N.C4, N.E4], // Am7
+            [N.E3, N.B3, N.D4, N.G4],       // Em7
+            [N.D3, N.A3, N.C4, N.E4, N.F4], // Dm9
+            [N.G2, N.D3, N.F3, N.A3, N.B3], // G9
+            [N.C3, N.E3, N.G3, N.B3, N.D4], // Cmaj9
+            [N.A2, N.C3, N.E3, N.G3, N.B3]  // Am9
         ],
-        melody:[N.G4, N.C5, N.E5, N.D5, N.C5, N.B4, N.A4, N.G4, N.E5, N.G5, N.D5, N.C5, N.B4, N.C5, N.D5, N.G4],
-        bass:[N.C3, null, N.G2, N.C3, N.F2, null, N.C3, N.F3, N.A2, null, N.E2, N.A2, N.G2, null, N.D2, N.G2],
+        melody:[
+            N.G4, N.C5, N.E5, N.D5, N.C5, N.B4, N.A4, N.G4, 
+            N.E5, N.G5, N.D5, N.C5, N.B4, N.C5, N.D5, N.G4,
+            N.A4, N.C5, N.F5, N.E5, N.D5, N.C5, N.B4, N.A4,
+            N.G4, N.B4, N.D5, N.F5, N.E5, N.D5, N.C5, null
+        ],
+        bass:[
+            N.C3, null, N.G2, N.C3, N.F2, null, N.C3, N.F3, 
+            N.A2, null, N.E2, N.A2, N.E2, null, N.B2, N.E3,
+            N.D3, null, N.A2, N.D3, N.G2, null, N.D2, N.G2,
+            N.C3, null, N.G2, N.C3, N.A2, null, N.E2, N.A2
+        ],
         drums:false, piano:true
     },
     lofi:{
-        bpm:74, wave:'triangle',
+        bpm:70, wave:'triangle',
         chords:[
             [N.C3, N.E3, N.G3, N.B3, N.D4], // Cmaj9
             [N.A2, N.C3, N.E3, N.G3, N.B3], // Am9
             [N.D3, N.F3, N.A3, N.C4, N.E4], // Dm9
-            [N.G2, N.B2, N.D3, N.F3, N.A3]  // G9
+            [N.G2, N.B2, N.D3, N.F3, N.A3], // G9
+            [N.E3, N.G3, N.B3, N.D4, N.F4], // Em7(b9)
+            [N.A2, N.E3, N.G3, N.C4, N.E4], // Am7
+            [N.F2, N.C3, N.E3, N.G3, N.A3], // Fmaj7
+            [N.G2, N.D3, N.F3, N.A3, N.C4]  // G11
         ],
-        melody:[N.G4, null, N.E5, N.D5, null, N.C5, null, N.B4, N.A4, N.C5, N.E5, null, N.D5, null, N.B4, null],
-        bass:[N.C3, N.C3, null, N.G2, N.A2, null, N.E2, null, N.D3, N.D3, null, N.A2, N.G2, null, N.D2, N.F2],
+        melody:[
+            N.G4, null, N.E5, N.D5, null, N.C5, null, N.B4, 
+            N.A4, N.C5, N.E5, null, N.D5, null, N.B4, null,
+            N.C5, N.E5, N.G5, N.F5, N.E5, N.D5, N.C5, N.A4,
+            N.B4, N.D5, N.F5, N.E5, N.D5, null, N.C5, null
+        ],
+        bass:[
+            N.C3, N.C3, null, N.G2, N.A2, null, N.E2, null, 
+            N.D3, N.D3, null, N.A2, N.G2, null, N.D2, N.F2,
+            N.E2, N.E2, null, N.B2, N.A2, null, N.E2, null,
+            N.F2, N.F2, null, N.C3, N.G2, null, N.D2, N.G2
+        ],
         drums:true, loFi:true
     },
     bossa:{
-        bpm:80, wave:'triangle',
+        bpm:76, wave:'triangle',
         chords:[
             [N.D3, N.F3, N.A3, N.C4, N.E4], // Dm9
             [N.G2, N.B2, N.D3, N.F3, N.A3], // G9
             [N.C3, N.E3, N.G3, N.B3, N.D4], // Cmaj9
+            [N.A2, N.C3, N.E3, N.G3, N.B3], // Am9
+            [N.D3, N.Gb3, N.A3, N.C4, N.E4],// D9 (Dominante secundario)
+            [N.G2, N.B2, N.D3, N.F3, N.Ab3],// G7(b9)
+            [N.C3, N.E3, N.G3, N.A3, N.D4], // C6/9
             [N.A2, N.C3, N.E3, N.G3, N.B3]  // Am9
         ],
-        melody:[N.A4, N.C5, N.B4, N.G4, N.E5, null, N.D5, N.C5, N.A4, N.F5, N.E5, N.C5, N.B4, N.G4, N.A4, null],
-        bass:[N.D3, null, N.A2, N.D3, N.G2, null, N.D2, N.G2, N.C3, null, N.G2, N.C3, N.A2, null, N.E2, N.A2],
+        melody:[
+            N.A4, N.C5, N.B4, N.G4, N.E5, null, N.D5, N.C5, 
+            N.A4, N.F5, N.E5, N.C5, N.B4, N.G4, N.A4, null,
+            N.F5, N.E5, N.D5, N.C5, N.B4, N.C5, N.D5, N.E5,
+            N.Ab5, N.G5, N.F5, N.E5, N.D5, N.C5, N.A4, null
+        ],
+        bass:[
+            N.D3, null, N.A2, N.D3, N.G2, null, N.D2, N.G2, 
+            N.C3, null, N.G2, N.C3, N.A2, null, N.E2, N.A2,
+            N.D3, null, N.A2, N.D3, N.G2, null, N.D2, N.G2,
+            N.C3, null, N.G2, N.C3, N.A2, null, N.E2, N.A2
+        ],
         drums:true, bossa:true
     },
     jazz:{
-        bpm:62, wave:'sine',
+        bpm:58, wave:'sine',
         chords:[
             [N.F3, N.A3, N.C4, N.E4, N.G4], // Fmaj9
             [N.D3, N.F3, N.A3, N.C4, N.E4], // Dm9
             [N.G2, N.B2, N.D3, N.F3, N.A3], // G9
+            [N.C3, N.E3, N.G3, N.B3, N.D4], // Cmaj9
+            [N.A2, N.C3, N.E3, N.G3, N.B3], // Am9
+            [N.D3, N.F3, N.Ab3, N.C4, N.E4],// Dm9(b5)
+            [N.G2, N.B2, N.D3, N.F3, N.Ab3],// G7(b9)
             [N.C3, N.E3, N.G3, N.B3, N.D4]  // Cmaj9
         ],
-        melody:[N.E5, N.D5, N.C5, N.A4, N.G4, N.A4, N.C5, N.D5, N.E5, N.G5, N.A5, N.G5, N.E5, N.C5, N.D5, null],
-        bass:[N.F2, N.A2, N.C3, N.E3, N.D3, N.F3, N.A3, N.C4, N.G2, N.B2, N.D3, N.F3, N.C3, N.E3, N.G3, N.B3],
+        melody:[
+            N.E5, N.D5, N.C5, N.A4, N.G4, N.A4, N.C5, N.D5, 
+            N.E5, N.G5, N.A5, N.G5, N.E5, N.C5, N.D5, null,
+            N.C5, N.B4, N.A4, N.G4, N.F4, N.G4, N.A4, N.C5,
+            N.Eb5, N.D5, N.C5, N.B4, N.G4, N.A4, N.C5, null
+        ],
+        bass:[
+            N.F2, N.A2, N.C3, N.E3, N.D3, N.F3, N.A3, N.C4, 
+            N.G2, N.B2, N.D3, N.F3, N.C3, N.E3, N.G3, N.B3,
+            N.A2, N.C3, N.E3, N.G3, N.D2, N.F2, N.Ab2, N.C3,
+            N.G2, N.B2, N.D3, N.F3, N.C3, N.G2, N.E2, N.C2
+        ],
         drums:true, jazz:true
     },
     folk:{
-        bpm:70, wave:'triangle',
+        bpm:66, wave:'triangle',
         chords:[
-            [N.C3, N.G3, N.C4, N.E4],
-            [N.G2, N.D3, N.G3, N.B3],
-            [N.A2, N.E3, N.A3, N.C4],
-            [N.F2, N.C3, N.F3, N.A3]
+            [N.C3, N.G3, N.C4, N.E4, N.G4], // C
+            [N.G2, N.D3, N.G3, N.B3, N.D4], // G
+            [N.A2, N.E3, N.A3, N.C4, N.E4], // Am
+            [N.F2, N.C3, N.F3, N.A3, N.C4], // F
+            [N.C3, N.G3, N.C4, N.E4, N.G4], // C
+            [N.E3, N.B3, N.E4, N.G4, N.B4], // Em
+            [N.F2, N.C3, N.F3, N.A3, N.C4], // F
+            [N.G2, N.D3, N.G3, N.B3, N.D4]  // G
         ],
-        melody:[N.E4, N.G4, N.C5, N.G4, N.E5, N.D5, N.C5, N.G4, N.A4, N.C5, N.E5, N.D5, N.C5, N.B4, N.C5, null],
-        bass:[N.C3, null, N.G2, N.C3, N.G2, null, N.D2, N.G2, N.A2, null, N.E2, N.A2, N.F2, null, N.C2, N.F2],
+        melody:[
+            N.E4, N.G4, N.C5, N.G4, N.E5, N.D5, N.C5, N.G4, 
+            N.A4, N.C5, N.E5, N.D5, N.C5, N.B4, N.C5, null,
+            N.G4, N.C5, N.E5, N.G5, N.E5, N.D5, N.C5, N.A4,
+            N.C5, N.D5, N.E5, N.D5, N.C5, N.B4, N.C5, null
+        ],
+        bass:[
+            N.C3, null, N.G2, N.C3, N.G2, null, N.D2, N.G2, 
+            N.A2, null, N.E2, N.A2, N.F2, null, N.C2, N.F2,
+            N.C3, null, N.G2, N.C3, N.E2, null, N.B2, N.E2,
+            N.F2, null, N.C2, N.F2, N.G2, null, N.D2, N.G2
+        ],
         drums:false, pluck:true
     },
     space:{
-        bpm:46, wave:'sine',
+        bpm:42, wave:'sine',
         chords:[
-            [N.C3, N.G3, N.C4, N.G4, N.B4],
-            [N.F3, N.C4, N.F4, N.C5, N.E5],
-            [N.A2, N.E3, N.A3, N.E4, N.G4],
-            [N.G2, N.D3, N.G3, N.D4, N.F4]
+            [N.C3, N.G3, N.C4, N.G4, N.B4, N.D5], // Cmaj9
+            [N.F3, N.C4, N.F4, N.C5, N.E5, N.G5], // Fmaj9
+            [N.A2, N.E3, N.A3, N.E4, N.G4, N.C5], // Am7
+            [N.G2, N.D3, N.G3, N.D4, N.F4, N.A4], // G9
+            [N.Eb3, N.Bb3, N.Eb4, N.G4, N.Bb4, N.D5], // Ebmaj9 (Atmósfera espacial)
+            [N.F3, N.C4, N.F4, N.A4, N.C5, N.E5], // Fmaj7
+            [N.Ab2, N.Eb3, N.Ab3, N.C4, N.Eb4, N.G4], // Abmaj7
+            [N.G2, N.D3, N.G3, N.B3, N.D4, N.F4]  // G7
         ],
-        melody:[N.G5, null, N.E5, null, N.C5, null, N.B4, null, N.D5, null, N.G5, null, N.E5, null, N.C5, null],
-        bass:[N.C2, null, null, null, N.F2, null, null, null, N.A2, null, null, null, N.G2, null, null, null],
+        melody:[
+            N.G5, null, N.E5, null, N.C5, null, N.B4, null, 
+            N.D5, null, N.G5, null, N.E5, null, N.C5, null,
+            N.Bb5, null, N.G5, null, N.Eb5, null, N.D5, null,
+            N.C5, null, N.Eb5, null, N.G5, null, N.F5, null
+        ],
+        bass:[
+            N.C2, null, null, null, N.F2, null, null, null, 
+            N.A2, null, null, null, N.G2, null, null, null,
+            N.Eb2, null, null, null, N.F2, null, null, null,
+            N.Ab2, null, null, null, N.G2, null, null, null
+        ],
         drums:false, pad:true, space:true
     },
     reggae:{
-        bpm:74, wave:'sine',
+        bpm:70, wave:'sine',
         chords:[
-            [N.C3, N.E3, N.G3, N.B3],
-            [N.F2, N.A2, N.C3, N.E3],
-            [N.G2, N.B2, N.D3, N.F3],
-            [N.C3, N.E3, N.G3, N.B3]
+            [N.C3, N.E3, N.G3, N.B3, N.D4], // Cmaj9
+            [N.F2, N.A2, N.C3, N.E3, N.G3], // Fmaj9
+            [N.G2, N.B2, N.D3, N.F3, N.A3], // G9
+            [N.C3, N.E3, N.G3, N.B3, N.D4], // Cmaj9
+            [N.A2, N.C3, N.E3, N.G3, N.B3], // Am9
+            [N.D3, N.F3, N.A3, N.C4, N.E4], // Dm9
+            [N.G2, N.B2, N.D3, N.F3, N.A3], // G9
+            [N.C3, N.E3, N.G3, N.B3, N.D4]  // Cmaj9
         ],
-        melody:[null, N.G4, null, N.E5, null, N.D5, N.C5, null, null, N.A4, null, N.C5, null, N.B4, N.G4, null],
-        bass:[N.C3, N.C3, N.G2, N.C3, N.F2, N.F2, N.C3, N.F2, N.G2, N.G2, N.D2, N.G2, N.C3, N.C3, N.G2, N.C3],
+        melody:[
+            null, N.G4, null, N.E5, null, N.D5, N.C5, null, 
+            null, N.A4, null, N.C5, null, N.B4, N.G4, null,
+            null, N.E5, null, N.G5, null, N.E5, N.D5, null,
+            null, N.C5, null, N.D5, null, N.B4, N.C5, null
+        ],
+        bass:[
+            N.C3, N.C3, N.G2, N.C3, N.F2, N.F2, N.C3, N.F2, 
+            N.G2, N.G2, N.D2, N.G2, N.C3, N.C3, N.G2, N.C3,
+            N.A2, N.A2, N.E2, N.A2, N.D3, N.D3, N.A2, N.D3,
+            N.G2, N.G2, N.D2, N.G2, N.C3, N.C3, N.G2, N.C3
+        ],
         drums:true, reggae:true
     },
     synthwave:{
-        bpm:90, wave:'sawtooth',
+        bpm:86, wave:'sawtooth',
         chords:[
-            [N.C3, N.G3, N.C4, N.E4],
-            [N.A2, N.E3, N.A3, N.C4],
-            [N.F2, N.C3, N.F3, N.A3],
-            [N.G2, N.D3, N.G3, N.B3]
+            [N.C3, N.G3, N.B3, N.D4, N.E4], // Cmaj9
+            [N.A2, N.E3, N.G3, N.C4, N.E4], // Am7
+            [N.F2, N.C3, N.E3, N.G3, N.A3], // Fmaj7
+            [N.G2, N.D3, N.F3, N.A3, N.B3], // G9
+            [N.E3, N.B3, N.D4, N.G4],       // Em7
+            [N.A2, N.E3, N.G3, N.C4],       // Am7
+            [N.F2, N.C3, N.E3, N.A3],       // Fmaj7
+            [N.G2, N.D3, N.G3, N.B3]        // G
         ],
-        melody:[N.C5, N.E5, N.G5, N.E5, N.D5, N.B4, N.C5, N.G4, N.A4, N.C5, N.E5, N.G5, N.F5, N.E5, N.D5, N.B4],
-        bass:[N.C2, N.C2, N.G2, N.C2, N.A2, N.A2, N.E2, N.A2, N.F2, N.F2, N.C2, N.F2, N.G2, N.G2, N.D2, N.G2],
+        melody:[
+            N.C5, N.E5, N.G5, N.E5, N.D5, N.B4, N.C5, N.G4, 
+            N.A4, N.C5, N.E5, N.G5, N.F5, N.E5, N.D5, N.B4,
+            N.E5, N.G5, N.B5, N.G5, N.A5, N.E5, N.G5, N.D5,
+            N.C5, N.E5, N.G5, N.F5, N.E5, N.D5, N.C5, null
+        ],
+        bass:[
+            N.C2, N.C2, N.G2, N.C2, N.A2, N.A2, N.E2, N.A2, 
+            N.F2, N.F2, N.C2, N.F2, N.G2, N.G2, N.D2, N.G2,
+            N.E2, N.E2, N.B1, N.E2, N.A2, N.A2, N.E2, N.A2,
+            N.F2, N.F2, N.C2, N.F2, N.G2, N.G2, N.D2, N.G2
+        ],
         drums:true, synth:true
     },
     zen:{
-        bpm:44, wave:'sine',
+        bpm:40, wave:'sine',
         chords:[
-            [N.C3, N.G3, N.D4],
-            [N.F3, N.C4, N.G4],
-            [N.A2, N.E3, N.B3],
-            [N.G2, N.D3, N.A3]
+            [N.C3, N.G3, N.D4, N.E4, N.G4], // Csus2/C
+            [N.F3, N.C4, N.G4, N.A4, N.C5], // Fsus2
+            [N.A2, N.E3, N.B3, N.C4, N.E4], // Am9
+            [N.G2, N.D3, N.A3, N.B3, N.D4], // Gsus4
+            [N.D3, N.A3, N.E4, N.F4, N.A4], // Dmsus2
+            [N.F3, N.C4, N.G4, N.A4, N.D5], // F6/9
+            [N.Ab2, N.Eb3, N.Bb3, N.C4, N.Eb4], // Ab add9
+            [N.G2, N.D3, N.A3, N.C4, N.D4]  // Gsus4
         ],
-        melody:[N.E4, null, null, N.G4, null, N.B4, null, N.A4, N.G4, null, null, N.E4, null, N.D4, null, null],
-        bass:[N.C2, null, null, null, N.F2, null, null, null, N.A2, null, null, null, N.G2, null, null, null],
+        melody:[
+            N.E4, null, null, N.G4, null, N.B4, null, N.A4, 
+            N.G4, null, null, N.E4, null, N.D4, null, null,
+            N.A4, null, null, N.C5, null, N.E5, null, N.D5,
+            N.C5, null, null, N.G4, null, N.E4, null, null
+        ],
+        bass:[
+            N.C2, null, null, null, N.F2, null, null, null, 
+            N.A2, null, null, null, N.G2, null, null, null,
+            N.D2, null, null, null, N.F2, null, null, null,
+            N.Ab2, null, null, null, N.G2, null, null, null
+        ],
         drums:false, zen:true
     }
 };
