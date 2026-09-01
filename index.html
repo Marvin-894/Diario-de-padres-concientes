@@ -940,12 +940,41 @@ function loadWeeklyEmotions() {
     for (const [emotion, count] of Object.entries(counts)) {
         html += `<div class="weekly-emotion">
             <span>${emotion}</span>
-            <span class="weekly-count">${count}</span>
+            <div>
+                <span class="weekly-count">${count}</span>
+                <button class="btn-delete-small" onclick="deleteWeeklyEmotion('${emotion}', '${filter}')">X</button>
+            </div>
         </div>`;
     }
     
-    html += `<div class="weekly-total">Total de registros: ${filtered.length}</div></div>`;
+    html += `<div class="weekly-total">Total de registros: ${filtered.length}</div>
+    <button class="btn-delete" style="float:none;margin-top:10px;width:100%" onclick="clearWeeklyEmotions('${filter}')">Eliminar Todo (${filter})</button>
+    </div>`;
     list.innerHTML = html;
+}
+
+function deleteWeeklyEmotion(emotion, childFilter) {
+    let weekly = JSON.parse(localStorage.getItem('weekly_emotions') || '[]');
+    if (childFilter === 'Todos') {
+        const index = weekly.findIndex(item => item.emotion === emotion);
+        if (index !== -1) weekly.splice(index, 1);
+    } else {
+        const index = weekly.findIndex(item => item.emotion === emotion && item.child === childFilter);
+        if (index !== -1) weekly.splice(index, 1);
+    }
+    localStorage.setItem('weekly_emotions', JSON.stringify(weekly));
+    loadWeeklyEmotions();
+}
+
+function clearWeeklyEmotions(childFilter) {
+    if (childFilter === 'Todos') {
+        localStorage.removeItem('weekly_emotions');
+    } else {
+        let weekly = JSON.parse(localStorage.getItem('weekly_emotions') || '[]');
+        weekly = weekly.filter(item => item.child !== childFilter);
+        localStorage.setItem('weekly_emotions', JSON.stringify(weekly));
+    }
+    loadWeeklyEmotions();
 }
 
 function loadEntries() {
