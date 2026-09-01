@@ -451,6 +451,26 @@ input[type=file]{
     margin-left:8px;
 }
 
+.btn-clear-emotions{
+    background:#ff6b6b;
+    color:#fff;
+    border:none;
+    padding:8px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:.85em;
+    font-weight:bold;
+    margin-top:10px;
+    margin-bottom:10px;
+    width:100%;
+    box-shadow:0 3px 0 #ee5253;
+}
+
+.btn-clear-emotions:active{
+    transform:translateY(3px);
+    box-shadow:none;
+}
+
 #history,
 #gratitude-history,
 #strategies-history,
@@ -803,6 +823,7 @@ Diseñada para immersión profunda.
 <option value="Jason">Solo Jason 🧒</option>
 <option value="Padre">Solo Papá 👨</option>
 </select>
+<button class="btn-clear-emotions" onclick="clearWeeklyEmotions()">🗑️ Limpiar Historial de Emociones</button>
 <div id="weeklyEmotionList"></div>
 </div>
 
@@ -914,6 +935,13 @@ function saveWeeklyEmotion(child, emotion) {
     loadWeeklyEmotions();
 }
 
+function clearWeeklyEmotions() {
+    if (confirm('¿Estás seguro de que deseas eliminar todo el registro de emociones?')) {
+        localStorage.removeItem('weekly_emotions');
+        loadWeeklyEmotions();
+    }
+}
+
 function loadWeeklyEmotions() {
     const list = document.getElementById('weeklyEmotionList');
     if (!list) return;
@@ -940,41 +968,12 @@ function loadWeeklyEmotions() {
     for (const [emotion, count] of Object.entries(counts)) {
         html += `<div class="weekly-emotion">
             <span>${emotion}</span>
-            <div>
-                <span class="weekly-count">${count}</span>
-                <button class="btn-delete-small" onclick="deleteWeeklyEmotion('${emotion}', '${filter}')">X</button>
-            </div>
+            <span class="weekly-count">${count}</span>
         </div>`;
     }
     
-    html += `<div class="weekly-total">Total de registros: ${filtered.length}</div>
-    <button class="btn-delete" style="float:none;margin-top:10px;width:100%" onclick="clearWeeklyEmotions('${filter}')">Eliminar Todo (${filter})</button>
-    </div>`;
+    html += `<div class="weekly-total">Total de registros: ${filtered.length}</div></div>`;
     list.innerHTML = html;
-}
-
-function deleteWeeklyEmotion(emotion, childFilter) {
-    let weekly = JSON.parse(localStorage.getItem('weekly_emotions') || '[]');
-    if (childFilter === 'Todos') {
-        const index = weekly.findIndex(item => item.emotion === emotion);
-        if (index !== -1) weekly.splice(index, 1);
-    } else {
-        const index = weekly.findIndex(item => item.emotion === emotion && item.child === childFilter);
-        if (index !== -1) weekly.splice(index, 1);
-    }
-    localStorage.setItem('weekly_emotions', JSON.stringify(weekly));
-    loadWeeklyEmotions();
-}
-
-function clearWeeklyEmotions(childFilter) {
-    if (childFilter === 'Todos') {
-        localStorage.removeItem('weekly_emotions');
-    } else {
-        let weekly = JSON.parse(localStorage.getItem('weekly_emotions') || '[]');
-        weekly = weekly.filter(item => item.child !== childFilter);
-        localStorage.setItem('weekly_emotions', JSON.stringify(weekly));
-    }
-    loadWeeklyEmotions();
 }
 
 function loadEntries() {
